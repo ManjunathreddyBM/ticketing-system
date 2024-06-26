@@ -22,6 +22,9 @@ public class Department {
 	
 	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<User> users;
+	
+	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Ticket> tickets;
 
 	public Long getId() {
 		return id;

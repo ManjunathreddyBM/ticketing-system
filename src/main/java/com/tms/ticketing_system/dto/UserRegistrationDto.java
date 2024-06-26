@@ -1,5 +1,7 @@
 package com.tms.ticketing_system.dto;
 
+import org.springframework.stereotype.Component;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,6 +12,7 @@ import lombok.Setter;
 @Data
 @Setter
 @Getter
+@Component
 public class UserRegistrationDto {
 
 	@NotBlank(message = "Username is mandatory")
@@ -68,7 +71,4 @@ public class UserRegistrationDto {
 	public void setDepartment(String department) {
 		this.department = department;
 	}
-	
-	
-	
 }

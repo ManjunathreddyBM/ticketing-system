@@ -19,16 +19,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException.Forbidden;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
+import com.tms.ticketing_system.dto.CreateTicket;
 import com.tms.ticketing_system.dto.LoginRequest;
 import com.tms.ticketing_system.dto.LoginResponse;
 import com.tms.ticketing_system.dto.ResponseEntity;
 import com.tms.ticketing_system.dto.UserRegistrationDto;
 import com.tms.ticketing_system.jwt.UserServiceJwt;
+import com.tms.ticketing_system.model.Department;
 import com.tms.ticketing_system.model.User;
+import com.tms.ticketing_system.repository.DepartmentRepository;
+import com.tms.ticketing_system.service.DepartmentService;
+import com.tms.ticketing_system.service.TicketService;
 import com.tms.ticketing_system.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,9 +52,27 @@ public class UserController {
 	@Autowired
 	private UserServiceJwt userServiceJwt;
 	
+	@Autowired
+	private DepartmentService departmentService;
+	
+   private final TicketService ticketService;
+
+    @Autowired
+    public UserController(TicketService ticketService) 
+	 {
+        this.ticketService = ticketService;
+        System.out.println("TicketController initialized >>> " +this.ticketService);
+    }
+	
 	@GetMapping
 	public String test() {
 		System.out.println("TESTING");
+		CreateTicket t = new CreateTicket();
+		t.setDepartment("IT");
+		t.setDescription("create ticket");
+		t.setEmail("manju@gmail.com");
+		t.setTitle("ssd");
+		System.out.println(ticketService.createTicket(t));
 		return "TESTING SUCCESS";
 	}
 	
@@ -78,6 +102,24 @@ public class UserController {
 		UserDetails u = userServiceJwt.loadUserByUsername(loginRequest.getUserName());
 	    System.out.println("Roles: " + u.getAuthorities());
 		return response;
+	}
+	
+	
+	
+	@PostMapping("/addDept")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Department> addDept(@RequestParam String name) {
+		Department d = departmentService.isDeptExsists(name);
+		if(d != null) {
+			return new ResponseEntity<Department>("Department already Exists", d);
+		} else {
+			d= departmentService.addDept(name);
+			if(d == null) {
+				return new ResponseEntity<Department>("Error Creating Department", d);
+			}else
+				return new ResponseEntity<Department>("Department created", d);
+		}
+		
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
