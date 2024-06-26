@@ -34,6 +34,9 @@ public class SecurityConfig{
 	@Autowired
 	public JwtAuthenticationFilter jwtAuthenticationFilter;
 	
+	@Autowired
+	public CustomLoggingFilter customLoggingFilter;
+	
 //	@Bean
 //	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http
@@ -55,21 +58,53 @@ public class SecurityConfig{
 //    return http.build();
 //		
 //	}
-	
+	 private static final String[] AUTH_WHITELIST = {
+	            // -- Swagger UI v2
+	            "/v2/api-docs",
+	            "/swagger-resources",
+	            "/swagger-resources/**",
+	            "/configuration/ui",
+	            "/configuration/security",
+	            "/swagger-ui.html",
+	            "/webjars/**",
+	            // -- Swagger UI v3 (OpenAPI)
+	            "/v3/api-docs/**",
+	            "/swagger-ui/**"
+	            // other public endpoints of your API may be appended to this array
+	    };
+	 
+	 private static final String[] CREATE_TICKET_ROLES = {
+	           "USER",
+	           "ADMIN"
+	    };
+
+	 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable());
 		
 		http.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/users","/users/login","/users/register").permitAll()
-				.requestMatchers("/users/getusers").hasRole("USER")
-				.anyRequest().authenticated());
-//				.anyRequest().permitAll());
+				  // .requestMatchers(AUTH_WHITELIST
+//	                        "/favicon.ico",
+//	                        "/swagger-ui/**",
+//	                        "/v3/api-docs/**",
+//	                        "/swagger-ui.html",
+//	                        "/swagger-resources/**",
+//	                        "/webjars/**"
+	             //   ).permitAll()
+                //.requestMatchers("/favicon.ico","/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
+//				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				//.requestMatchers("/users/getusers","/ticket/**","/users", "/users/login", "/users/register").permitAll()				
+//				.requestMatchers("/users/getusers").hasRole("USER")
+				//.requestMatchers("/ticket/**").hasAnyRole(CREATE_TICKET_ROLES)
+				.anyRequest().permitAll());
 		
 		
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		
-		http.authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http.authenticationProvider(authenticationProvider())
+		.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+		.addFilterBefore(customLoggingFilter, JwtAuthenticationFilter.class);
 		
 		http.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler()));
 		return http.build();
