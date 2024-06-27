@@ -123,7 +123,7 @@ public class UserController {
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-    public org.springframework.http.ResponseEntity<ResponseEntity<List<String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public org.springframework.http.ResponseEntity<ResponseEntity<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult()
                                 .getAllErrors()
                                 .stream()

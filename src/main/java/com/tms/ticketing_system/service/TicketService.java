@@ -2,6 +2,7 @@ package com.tms.ticketing_system.service;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import com.tms.ticketing_system.repository.DepartmentRepository;
 import com.tms.ticketing_system.repository.TicketRepository;
 import com.tms.ticketing_system.repository.UserRepository;
 
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class TicketService {
@@ -32,11 +32,11 @@ public class TicketService {
 	public ResponseEntity<Ticket> createTicket(CreateTicket createTicket) {
 		Department dept = departmentRepository.findByName(createTicket.getDepartment());
 		if(dept == null)
-			return new ResponseEntity<Ticket>("Department "+ createTicket.getDepartment() + " Does not exist", null);
+			return new ResponseEntity("Department "+ createTicket.getDepartment() + " Does not exist", null);
 		
 		User user = userRepository.findByEmail(createTicket.getEmail());
 		if(user == null)
-			return new ResponseEntity<Ticket>("User "+ createTicket.getEmail() + " Does not exist", null);
+			return new ResponseEntity("User "+ createTicket.getEmail() + " Does not exist", null);
 		
 		Ticket ticket = new Ticket();
 		ticket.setCreationDate(new Date());
@@ -51,7 +51,19 @@ public class TicketService {
 		if(newTicket != null)
 			return new ResponseEntity<Ticket>("Ticket Craeted Successfully", newTicket);
 		else
-			return new ResponseEntity<Ticket>("Error creating ticket", null);
+			return new ResponseEntity("Error creating ticket", null);
 			
+	}
+	
+	public List<Ticket> getAllTickets() {
+		return ticketRepository.findAll();
+	}
+
+	public List<Ticket> getTickets(String name) {
+		return ticketRepository.findTicketsByUserEmail(name);
+	}
+	
+	public List<Ticket> getTicketsByDept(String dept) {
+		return ticketRepository.findTicketsByDepartment(dept);
 	}
 }
