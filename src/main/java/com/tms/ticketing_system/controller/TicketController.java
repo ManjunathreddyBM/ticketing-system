@@ -27,7 +27,7 @@ public class TicketController {
     private TicketService ticketService;
 	
 	@PostMapping("/createTicket")
-	@PreAuthorize("hasRole('USER')")
+	//@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Ticket> createTicket(@RequestBody CreateTicket createTicket) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    System.out.println("Authenticated User: " + authentication.getName());
@@ -40,7 +40,7 @@ public class TicketController {
 	}
 	
 	@GetMapping("getAllTickets")
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity viewAllTickets() {
 		return new ResponseEntity("Tickets", ticketService.getAllTickets());
 	}
@@ -50,7 +50,7 @@ public class TicketController {
 	}
 
 	@GetMapping("getTickets")
-	@PreAuthorize("hasRole('USER')")
+	//@PreAuthorize("hasRole('USER')")
 	public ResponseEntity getTickets() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    System.out.println("Authenticated User: " + authentication.getName());
@@ -58,13 +58,13 @@ public class TicketController {
 	}
 	
 	@GetMapping("getTickets/{username}")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	//@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ResponseEntity getTicketsByUserName(@PathVariable String username) {
 	    return new ResponseEntity("Tickets",  ticketService.getTickets(username));	   
 	}
 	
 	@GetMapping("getTicketsByDept/{department}")
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	//@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ResponseEntity getTicketsByDepartment(@PathVariable String department) {
 	    return new ResponseEntity("Tickets",  ticketService.getTicketsByDept(department));	   
 	}

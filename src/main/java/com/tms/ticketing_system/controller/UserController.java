@@ -84,7 +84,7 @@ public class UserController {
 	
 	
 	@GetMapping("/getusers")
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	public List<User> getUsers() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    System.out.println("Authenticated User: " + authentication.getName());
@@ -107,7 +107,7 @@ public class UserController {
 	
 	
 	@PostMapping("/addDept")
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Department> addDept(@RequestParam String name) {
 		Department d = departmentService.isDeptExsists(name);
 		if(d != null) {

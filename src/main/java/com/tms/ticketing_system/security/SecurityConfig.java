@@ -93,11 +93,14 @@ public class SecurityConfig{
 //	                        "/webjars/**"
 	             //   ).permitAll()
                 //.requestMatchers("/favicon.ico","/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
-//				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-				//.requestMatchers("/users/getusers","/ticket/**","/users", "/users/login", "/users/register").permitAll()				
-//				.requestMatchers("/users/getusers").hasRole("USER")
-				//.requestMatchers("/ticket/**").hasAnyRole(CREATE_TICKET_ROLES)
-				.anyRequest().permitAll());
+				.requestMatchers(AUTH_WHITELIST).permitAll()
+				.requestMatchers("/users", "/users/login", "/users/register").permitAll()
+				//.requestMatchers("/users/getusers").hasRole("USER")
+				.requestMatchers("/users/addDept","/users/getusers").hasRole("ADMIN")
+				.requestMatchers("/ticket/createTicket","/ticket/getTickets").hasRole("USER")
+				.requestMatchers("ticket/getAllTickets").hasRole("ADMIN")
+				.requestMatchers("/ticket/getTickets/","ticket/getTicketsByDept/").hasAnyRole(CREATE_TICKET_ROLES)
+				.anyRequest().authenticated());
 		
 		
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
